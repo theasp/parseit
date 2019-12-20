@@ -110,6 +110,10 @@ $ getent passwd root | nodejs target/parseit.js --preset passwd --format yaml
   shell: /bin/bash
 #+end_example
 
+* Grammar
+
+Parseit uses [[https://github.com/Engelberg/instaparse][Instaparse]], so the [[https://github.com/Engelberg/instaparse#notation][notation section of the tutorial]] has a good description of the grammar syntax.  Keep in mind that you will not need to escape strings as you would in Clojure as the grammar will be read out of a text file.
+
 * Building
 ** Node.js Javascript
 
