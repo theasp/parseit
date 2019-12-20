@@ -1,0 +1,111 @@
+#+TITLE: Parseit
+
+* Introduction
+Parseit is command line tool to parse data using [[https://en.wikipedia.org/wiki/Extended_Backus%25E2%2580%2593Naur_form][EBNF]] or [[https://en.wikipedia.org/wiki/Augmented_Backus%25E2%2580%2593Naur_form][ABNF]] using the excellent [[https://github.com/Engelberg/instaparse][Instaparse]] library, and serializing the result into [[https://www.json.org/json-en.html][JSON]], [[https://github.com/edn-format/edn][EDN]] or [[https://github.com/cognitect/transit-format][Transit]] format.
+
+* Usage
+#+begin_example
+Usage: parseit [options] <grammar> [input]
+       parseit [options] --preset <preset> [input]
+       parseit --help
+
+Options
+  -p, --preset PRESET   none    Preset grammar to use
+  -f, --format FORMAT   json    Output the parsed result in
+  -t, --tx SPEC                 Using the form <TERMINAL>:<TYPE> to transform a terminal into a type
+  -T, --no-standard-tx          Do use the standard transformations
+  -s, --style TYPE      hiccup  Build the parsed tree in the style of hiccup or enlive
+  -h, --help                    Help
+
+Output Formats
+  edn
+  json
+  transit
+  yaml
+
+Transformation Types
+  decimal, float, number
+    Convert to floating point
+  int, integer
+    Convert to integer
+  array, list, vec
+    Create list from children
+  dict, map, object
+    Create map from children
+  string, text
+    Convert to string
+
+Presets
+  csv
+  passwd
+#+end_example
+
+* Example
+** Parsing ~passwd~
+
+You can parse ~passwd~ entries using the following as ~passwd.ebnf~:
+#+NAME: passwd-ebnf
+#+HEADER: :exports code
+#+HEADER: :results silent
+#+HEADER: :tangle passwd.ebnf
+#+BEGIN_SRC conf
+passwd = (user <EOL>)*
+user = name? <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell
+name = STRING
+pw = STRING
+uid = INTEGER
+gid = INTEGER
+gecos = STRING?
+home = STRING
+shell = STRING
+STRING = #'[^:\r\n]+'
+INTEGER = SIGN? DIGITS EXPONENT?
+<EXPONENT> = 'e' DIGITS
+<SIGN> = '+' | '-'
+<DIGITS> = #'[0-9]+'
+SEP = ':'
+EOL = #'(?:\r\n|\r|\n)'
+#+END_SRC
+
+We will use ~getent passwd root~ to get the entry for the root user:
+#+begin_example
+$ getent passwd root
+root:x:0:0:root:/root:/bin/bash
+#+end_example
+
+We can then pipe that into Parseit and see the result:
+#+begin_example
+$ getent passwd root | parseit passwd.ebnf 
+["passwd",["user",["name","root"],["pw","x"],["uid",0],["gid",0],["gecos","root"],["home","/root"],["shell","/bin/bash"]]]
+#+end_example
+
+Not a bad start!  You will notice that the UID and GID values were converted into integers.  There is a library of standard transformations and the ~INTEGER~ terminal will be transformed into an integer, and the ~STRING~ terminal will be turned into a string.  You can avoid this by using ~--no-standard-tx~:
+#+begin_example
+$ getent passwd root | node target/parseit.js --no-standard-tx passwd.ebnf 
+["passwd",["user",["name",["STRING","root"]],["pw",["STRING","x"]],["uid",["INTEGER","0"]],["gid",["INTEGER","0"]],["gecos",["STRING","root"]],["home",["STRING","/root"]],["shell",["STRING","/bin/bash"]]]]
+#+end_example
+
+If you use the options ~--tx user:map~ and ~--tx passwd:list~, Parseit will turn the ~user~ terminal into a map (dictionary) and ~passwd~ terminal into a list of users:
+#+BEGIN_EXAMPLE
+$ getent passwd root | parseit --tx user:map --tx passwd:list passwd.ebnf 
+[{"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}]
+#+END_EXAMPLE
+
+You don't actually need the EBNF file or any of those options though!  There is a ~passwd~ preset which does it all for your:
+#+begin_example
+$ getent passwd root | nodejs target/parseit.js --preset passwd
+[{"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}]
+#+end_example
+
+Maybe you don't like reading JSON?  You can use the YAML output format to make it more readable:
+#+begin_example
+$ getent passwd root | nodejs target/parseit.js --preset passwd --format yaml
+---
+- name: root
+  pw: x
+  uid: 0
+  gid: 0
+  gecos: root
+  home: /root
+  shell: /bin/bash
+#+end_example

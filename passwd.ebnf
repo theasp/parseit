@@ -1,0 +1,17 @@
+passwd = (user <EOL>)*
+user = name? <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell
+
+name = STRING
+pw = STRING
+uid = INTEGER
+gid = INTEGER
+gecos = STRING?
+home = STRING
+shell = STRING
+STRING = #'[^:\r\n]+'
+NTEGER = SIGN? DIGITS EXPONENT?
+<EXPONENT> = 'e' DIGITS
+<SIGN> = '+' | '-'
+<DIGITS> = #'[0-9]+'
+SEP = ':'
+EOL = #'(?:\r\n|\r|\n)'
