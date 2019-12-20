@@ -1,7 +1,7 @@
 #+TITLE: Parseit
 
 * Introduction
-Parseit is command line tool to parse data using [[https://en.wikipedia.org/wiki/Extended_Backus%25E2%2580%2593Naur_form][EBNF]] or [[https://en.wikipedia.org/wiki/Augmented_Backus%25E2%2580%2593Naur_form][ABNF]] using the excellent [[https://github.com/Engelberg/instaparse][Instaparse]] library, and serializing the result into [[https://www.json.org/json-en.html][JSON]], [[https://github.com/edn-format/edn][EDN]] or [[https://github.com/cognitect/transit-format][Transit]] format.
+Parseit is command line tool to parse data using [[https://en.wikipedia.org/wiki/Extended_Backus%25E2%2580%2593Naur_form][EBNF]] or [[https://en.wikipedia.org/wiki/Augmented_Backus%25E2%2580%2593Naur_form][ABNF]] using the excellent [[https://github.com/Engelberg/instaparse][Instaparse]] library, and serializing the result into [[https://www.json.org/json-en.html][JSON]], [[https://github.com/edn-format/edn][EDN]], [[https://yaml.org/][YAML]] or [[https://github.com/cognitect/transit-format][Transit]] format.
 
 * Usage
 #+begin_example
