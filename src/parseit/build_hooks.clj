@@ -15,7 +15,7 @@
   (case (:shadow.build/mode state)
     :release
     (let [cmd ["nexe" "--output" dest src]]
-      (print (fmt "Executing: %s" cmd))
+      (println (format "Executing: %s" cmd))
       (exec cmd))
 
     true)
