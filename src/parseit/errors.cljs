@@ -28,7 +28,7 @@
   (exit 1))
 
 (defn parsing-options [errors summary]
-  (print-stderr "ERROR: Problems parsing command line options:")
+  (print-stderr "ERROR: Unable to parse command line options:")
   (doseq [error errors]
     (printf-stderr "  %s" error))
   (exit 1))
