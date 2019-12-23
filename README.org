@@ -124,17 +124,9 @@ Parseit uses [[https://github.com/Engelberg/instaparse][Instaparse]], so the [[h
 * Building
 ** Node.js Javascript
 
-This will install Shadow CLJS and then build ~target/parseit.js~:
+This will install Shadow CLJS and then build the JavaScript as ~target/parseit.js~ and a native executable (using nexe) as ~target/parseit~:
 #+begin_example
 $ npm install -g shadow-cljs
 $ npm install --save-dev shadow-cljs
 $ shadow-cljs release cli
-#+end_example
-
-** Native Executable
-
-This will install ~nexe~ and use it to create the executable ~./parseit~ from ~target/parseit.js~:
-#+begin_example
-$ npm install -g nexe
-$ nexe target/parseit.js
 #+end_example
