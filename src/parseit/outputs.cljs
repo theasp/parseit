@@ -24,10 +24,10 @@
       (print)))
 
 (def output-fns
-  {"edn"     edn-output
-   "json"    json-output
-   "transit" transit-output
-   "yaml"    yaml-output})
+  {:edn    edn-output
+   :json   json-output
+   :transi transit-output
+   :yaml   yaml-output})
 
 (defn output-parsed [{:keys [parsed options] :as state}]
   (let [format    (get options :format)
