@@ -1,0 +1,32 @@
+{
+  "name": "parseit",
+  "version": "0.0.1",
+  "description": "Parseit is command line tool to parse data using EBNF or ABNF using the excellent Instaparse library, and serializing the result into JSON, EDN, YAML or Transit format.",
+  "main": "target/parseit.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theasp/parseit.git"
+  },
+  "keywords": [
+    "clojurescript",
+    "instaparse",
+    "parse",
+    "cli",
+    "ebnf",
+    "abnf"
+  ],
+  "author": "Andrew Phillips",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/theasp/parseit/issues"
+  },
+  "homepage": "https://github.com/theasp/parseit#readme",
+  "dependencies": {
+    "js-yaml": "^3.13.1",
+    "nexe": "^3.3.2",
+    "source-map": "^0.7.3"
+  }
+}
