@@ -10,12 +10,13 @@ Usage: parseit [options] <grammar> [input]
        parseit --help
 
 Options
-  -p, --preset PRESET   none    Preset grammar to use
-  -f, --format FORMAT   json    Output the parsed result in
-  -t, --tx SPEC                 Using the form <TERMINAL>:<TYPE> to transform a terminal into a type
-  -T, --no-standard-tx          Do use the standard transformations
-  -s, --style TYPE      hiccup  Build the parsed tree in the style of hiccup or enlive
-  -h, --help                    Help
+  -p, --preset PRESET        none    Preset grammar to use
+  -f, --format FORMAT        json    Select the output format
+  -s, --start RULE                   Start processing at this rule
+  -t, --transform RULE:TYPE          Transform a rule into a type
+  -T, --no-standard-tx               Do use the standard transformations
+  -S, --style TYPE           hiccup  Build the parsed tree in the style of hiccup or enlive
+  -h, --help                         Help
 
 Output Formats
   edn
@@ -49,8 +50,8 @@ You can parse ~passwd~ entries using the following as ~passwd.ebnf~:
 #+HEADER: :results silent
 #+HEADER: :tangle passwd.ebnf
 #+BEGIN_SRC conf
-passwd = (user <EOL>)*
-user = name? <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell
+passwd = (user)*
+user = name <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell <EOL>
 name = STRING
 pw = STRING
 uid = INTEGER
@@ -79,27 +80,33 @@ $ getent passwd root | parseit passwd.ebnf
 ["passwd",["user",["name","root"],["pw","x"],["uid",0],["gid",0],["gecos","root"],["home","/root"],["shell","/bin/bash"]]]
 #+end_example
 
-Not a bad start!  You will notice that the UID and GID values were converted into integers.  There is a library of standard transformations and the ~INTEGER~ terminal will be transformed into an integer, and the ~STRING~ terminal will be turned into a string.  You can avoid this by using ~--no-standard-tx~:
+Not a bad start!  You will notice that the UID and GID values were converted into integers.  There is a library of standard transformations and the ~INTEGER~ rule will be transformed into an integer, and the ~STRING~ rule will be turned into a string.  You can avoid this by using ~--no-standard-tx~:
 #+begin_example
 $ getent passwd root | node target/parseit.js --no-standard-tx passwd.ebnf 
 ["passwd",["user",["name",["STRING","root"]],["pw",["STRING","x"]],["uid",["INTEGER","0"]],["gid",["INTEGER","0"]],["gecos",["STRING","root"]],["home",["STRING","/root"]],["shell",["STRING","/bin/bash"]]]]
 #+end_example
 
-If you use the options ~--tx user:map~ and ~--tx passwd:list~, Parseit will turn the ~user~ terminal into a map (dictionary) and ~passwd~ terminal into a list of users:
+If you use the options ~--transform user:map~ and ~--transform passwd:list~, Parseit will turn the ~user~ rule into a map (dictionary) and ~passwd~ rule into a list of users:
 #+BEGIN_EXAMPLE
-$ getent passwd root | parseit --tx user:map --tx passwd:list passwd.ebnf 
+$ getent passwd root | parseit --transform user:map --transform passwd:list passwd.ebnf 
 [{"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}]
 #+END_EXAMPLE
 
 You don't actually need the EBNF file or any of those options though!  There is a ~passwd~ preset which does it all for your:
 #+begin_example
-$ getent passwd root | nodejs target/parseit.js --preset passwd
+$ getent passwd root | parseit --preset passwd
 [{"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}]
+#+end_example
+
+We are parsing a single user, but it's currently being returned in an array.  We can tell Parseit to start parsing at a specific rule using the argument ~--start rule~:
+#+begin_example
+$ getent passwd root | parseit --preset passwd --start user
+{"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}
 #+end_example
 
 Maybe you don't like reading JSON?  You can use the YAML output format to make it more readable:
 #+begin_example
-$ getent passwd root | nodejs target/parseit.js --preset passwd --format yaml
+$ getent passwd root | parseit --preset passwd --format yaml
 ---
 - name: root
   pw: x

@@ -17,18 +17,24 @@
   [["-p" "--preset PRESET" "Preset grammar to use"
     :id :preset
     :default nil
-    :parse-fn #(when-not (= "none" %) %)
+    :parse-fn #(when-not (or (str/blank? %)
+                             (= "none" %))
+                 (keyword %))
     :default-desc "none"]
    ["-f" "--format FORMAT" "Select the output format"
     :id :format
     :default "json"
-    :parse-fn #(when-not (str/blank? %) %)]
-   ["-t" "--tx TERMINAL:TYPE" "Transform a terminal into a type"
+    :parse-fn #(when-not (str/blank? %)
+                 (keyword %))]
+   ["-s" "--start RULE" "Start processing at this rule"
+    :parse-fn #(when-not (str/blank? %)
+                 (keyword %))]
+   ["-t" "--transform RULE:TYPE" "Transform a rule into a type"
     :id :tx
     :default []
     :parse-fn #(str/split % #":" 2)
     :validate [#(not (str/blank? (first %)))
-               "Transform terminal missing"
+               "Transform rule missing"
 
                #(not (str/blank? (second %)))
                "Transform target missing"
@@ -44,7 +50,7 @@
                     (update :tx conj value)))]
    ["-T" "--no-standard-tx" "Do use the standard transformations"
     :id :no-standard-tx?]
-   ["-s" "--style TYPE" "Build the parsed tree in the style of hiccup or enlive"
+   ["-S" "--style TYPE" "Build the parsed tree in the style of hiccup or enlive"
     :default "hiccup"
     :parse-fn #(when-not (str/blank? %) %)]
    ["-h" "--help" "Help"]])
@@ -83,7 +89,6 @@
   (transform-types-help)
   (print "")
   (presets-help))
-
 
 (defn handle-opts-normal [options arguments]
   (-> {:options options :arguments arguments}

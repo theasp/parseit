@@ -18,10 +18,8 @@
                       :passwd transforms/transform-list})})
 
 (def presets
-  {""       nil
-   nil      nil
-   "csv"    csv-preset
-   "passwd" passwd-preset})
+  {:csv    csv-preset
+   :passwd passwd-preset})
 
 (defn load-preset [state]
   (let [preset-name (-> state :options :preset)

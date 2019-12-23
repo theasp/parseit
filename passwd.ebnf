@@ -1,5 +1,5 @@
-passwd = (user <EOL>)*
-user = name? <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell
+passwd = user*
+user = name <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell <EOL>
 
 name = STRING
 pw = STRING

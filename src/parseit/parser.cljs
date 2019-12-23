@@ -42,8 +42,15 @@
     (assoc state :input (slurp/slurp-file file))
     (assoc state :input (slurp/slurp-file 0))))
 
-(defn parse-input [{:keys [parser input] :as state}]
-  (let [parsed (insta/parse parser input)]
+(defn some-second? [d]
+  (some? (second d)))
+
+(defn parse-input [{:keys [parser input options] :as state}]
+  (let [parse-opts (->>  [:start :partial :total :unhide :optimize]
+                         (select-keys options)
+                         (filter some-second?)
+                         (apply concat))
+        parsed     (apply insta/parse parser input parse-opts)]
     (if (insta/failure? parsed)
       (errors/unable-to-parse parsed)
       (-> state
