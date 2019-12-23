@@ -122,8 +122,6 @@ $ getent passwd root | parseit --preset passwd --format yaml
 Parseit uses [[https://github.com/Engelberg/instaparse][Instaparse]], so the [[https://github.com/Engelberg/instaparse#notation][notation section of the tutorial]] has a good description of the grammar syntax.  Keep in mind that you will not need to escape strings as you would in Clojure as the grammar will be read out of a text file.
 
 * Building
-** Node.js Javascript
-
 This will install Shadow CLJS and then build the JavaScript as ~target/parseit.js~ and a native executable (using nexe) as ~target/parseit~:
 #+begin_example
 $ npm install -g shadow-cljs
