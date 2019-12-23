@@ -1,6 +1,7 @@
 ;; shadow-cljs configuration
 {:deps         true
  :source-paths ["src"]
- :builds       {:cli {:target    :node-script
-                      :output-to "target/parseit.js"
-                      :main      parseit.cli/main}}}
+ :builds       {:cli {:target      :node-script
+                      :output-to   "target/parseit.js"
+                      :main        parseit.cli/main
+                      :build-hooks [(parseit.build-hooks/nexe "target/parseit.js" "target/parseit")]}}}
