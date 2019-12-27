@@ -50,7 +50,8 @@
                          (select-keys options)
                          (filter some-second?)
                          (apply concat))
-        parsed     (apply insta/parse parser input parse-opts)]
+        parse-fn   (if (:all? options) insta/parses insta/parse)
+        parsed     (apply parse-fn parser input :optimize :memory parse-opts)]
     (if (insta/failure? parsed)
       (errors/unable-to-parse parsed)
       (-> state

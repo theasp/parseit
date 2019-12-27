@@ -51,6 +51,8 @@
                     (update :tx conj value)))]
    ["-T" "--no-standard-tx" "Do use the standard transformations"
     :id :no-standard-tx?]
+   ["-a" "--all" "Return all parses rather than the best match"
+    :id :all?]
    ["-S" "--style TYPE" "Build the parsed tree in the style of hiccup or enlive"
     :default "hiccup"
     :parse-fn #(when-not (str/blank? %) %)]
