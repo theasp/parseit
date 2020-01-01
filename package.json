@@ -26,7 +26,10 @@
   "homepage": "https://github.com/theasp/parseit#readme",
   "dependencies": {
     "js-yaml": "^3.13.1",
-    "nexe": "^3.3.2",
     "source-map": "^0.7.3"
+  },
+  "devDependencies": {
+    "nexe": "^3.3.2",
+    "shadow-cljs": "^2.8.83"
   }
 }
