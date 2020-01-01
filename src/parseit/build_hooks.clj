@@ -14,7 +14,7 @@
   [state src dest]
   (case (:shadow.build/mode state)
     :release
-    (let [cmd ["nexe" "--output" dest src]]
+    (let [cmd ["npx" "nexe"]]
       (println (format "Executing: %s" cmd))
       (exec cmd))
 
