@@ -15,13 +15,13 @@
       (catch js/Object e
         (errors/unable-to-read-file e)))))
 
-(defn read-stream-split [stream regex line-fn done-fn]
+(defn read-stream-split [^js stream regex line-fn done-fn]
   (-> stream
       (.pipe (split2 regex nil nil))
       (.on "data" line-fn)
       (.on "end" done-fn)))
 
-(defn read-stream [stream data-fn done-fn]
+(defn read-stream [^js stream data-fn done-fn]
   (-> stream
       (.on "data" data-fn)
       (.on "end" done-fn)))
