@@ -29,9 +29,12 @@
    :transit transit-output
    :yaml    yaml-output})
 
-(defn output-parsed [{:keys [parsed options] :as state}]
+(defn output-parsed [{:keys [output-fn parsed] :as state}]
+  (output-fn parsed))
+
+(defn build-output [{:keys [options] :as state}]
   (let [format    (get options :format)
         output-fn (get output-fns format)]
     (if output-fn
-      (output-fn parsed)
+      (assoc state :output-fn output-fn)
       (errors/unknown-format format))))

@@ -12,10 +12,13 @@ Usage: parseit [options] <grammar> [input]
 Options
   -p, --preset PRESET        none    Preset grammar to use
   -f, --format FORMAT        json    Select the output format
-  -s, --start RULE                   Start processing at this rule
+  -S, --start RULE                   Start processing at this rule
   -t, --transform RULE:TYPE          Transform a rule into a type
   -T, --no-standard-tx               Do use the standard transformations
-  -S, --style TYPE           hiccup  Build the parsed tree in the style of hiccup or enlive
+  -a, --all                          Return all parses rather than the best match
+  -s, --split REGEX                  Process input as a stream, parsing each chunk seperated by REGEX
+  -e, --encoding ENCODING    utf8    Use the specified encoding when reading the input, or raw
+  -X, --style TYPE           hiccup  Build the parsed tree in the style of hiccup or enlive
   -h, --help                         Help
 
 Output Formats
@@ -50,8 +53,9 @@ You can parse ~passwd~ entries using the following as ~passwd.ebnf~:
 #+HEADER: :results silent
 #+HEADER: :tangle passwd.ebnf
 #+BEGIN_SRC conf
-passwd = (user)*
-user = name <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell <EOL>
+passwd = (user <EOL>)*
+user = name <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell
+
 name = STRING
 pw = STRING
 uid = INTEGER
@@ -60,10 +64,7 @@ gecos = STRING?
 home = STRING
 shell = STRING
 STRING = #'[^:\r\n]+'
-INTEGER = SIGN? DIGITS EXPONENT?
-<EXPONENT> = 'e' DIGITS
-<SIGN> = '+' | '-'
-<DIGITS> = #'[0-9]+'
+INTEGER = #'[0-9]+'
 SEP = ':'
 EOL = #'(?:\r\n|\r|\n)'
 #+END_SRC
@@ -98,10 +99,27 @@ $ getent passwd root | parseit --preset passwd
 [{"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}]
 #+end_example
 
-We are parsing a single user, but it's currently being returned in an array.  We can tell Parseit to start parsing at a specific rule using the argument ~--start rule~:
+We are parsing a single user, but it's currently being returned in an array.  We can tell Parseit to start parsing at a specific rule using the argument ~--start RULE~:
 #+begin_example
 $ getent passwd root | parseit --preset passwd --start user
+Parse error at line 1, column 23:
+root:x:0:0:root:/root:/bin/bash
+                      ^
+Expected:
+#"[^:\r\n]+" (followed by end-of-string)
+#+end_example
+
+Hey, that didn't work!  The problem is that the input ends with a newline and the user rule does not allow that.  We can use the ~--split REGEX~ argument to split the input on newlines.
+#+begin_example
+$ getent passwd root | parseit --preset passwd --start user --split '\n'
 {"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}
+#+end_example
+
+With ~--split~, each chunk will be processed as they are read. You can see this by doing:
+#+begin_example
+$ (getent passwd root; sleep 10; getent passwd bin) | parseit --preset passwd --start user --split '\n'
+{"name":"root","pw":"x","uid":0,"gid":0,"gecos":"root","home":"/root","shell":"/bin/bash"}
+{"name":"bin","pw":"x","uid":2,"gid":2,"gecos":"bin","home":"/bin","shell":"/usr/sbin/nologin"}
 #+end_example
 
 Maybe you don't like reading JSON?  You can use the YAML output format to make it more readable:

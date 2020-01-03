@@ -14,48 +14,46 @@
    "enlive" :enlive
    "list"   :enlive})
 
-(defn build-parser [{:keys [grammar] :as state}]
-  (let [style-name (get-in state [:options :style])
-        style      (get styles style-name)]
-    (if style
-      (-> state
-          (assoc :parser (insta/parser grammar :output-format style))
-          (dissoc :grammar))
+
+
+(defn some-second? [d]
+  (some? (second d)))
+
+(defn build-parser [{:keys [grammar options parser] :as state}]
+  (let [style-name (get-in state [:options :style])]
+    (if-let [style (get styles style-name)]
+      (let [parser     (or parser (insta/parser grammar :output-format style))
+            parse-opts (->>  [:start :partial :total :unhide :optimize]
+                             (select-keys options)
+                             (filter some-second?)
+                             (apply concat))
+            parse      (if (:all? options)
+                         insta/parses
+                         insta/parse)
+            parse-fn   (fn [input]
+                         (let [parsed (apply parse parser input :optimize :memory parse-opts)]
+                           (if (insta/failure? parsed)
+                             (errors/unable-to-parse parsed)
+                             parsed)))]
+        (assoc state :parse-fn parse-fn))
       (errors/invalid-style style-name))))
 
 (defn load-grammar-file [state]
   (if-let [file (-> state :arguments first)]
     (-> state
         (assoc :grammar-file file)
-        (assoc :grammar (slurp/slurp-file file))
+        (assoc :grammar (slurp/slurp-file file "utf8"))
         (update :arguments rest)
         (build-parser))
     (errors/missing-argument-grammar-file)))
 
 (defn load-grammar [state]
-  (if (-> state :options :preset)
-    (presets/load-preset state)
+  (if (or (:grammar state) (:parser state))
+    state
     (load-grammar-file state)))
 
-(defn load-input [{:keys [arguments] :as state}]
-  (if-let [file (first arguments)]
-    (assoc state :input (slurp/slurp-file file))
-    (assoc state :input (slurp/slurp-file 0))))
 
-(defn some-second? [d]
-  (some? (second d)))
 
-(defn parse-input [{:keys [parser input options] :as state}]
-  (let [parse-opts (->>  [:start :partial :total :unhide :optimize]
-                         (select-keys options)
-                         (filter some-second?)
-                         (apply concat))
-        parse-fn   (if (:all? options) insta/parses insta/parse)
-        parsed     (apply parse-fn parser input :optimize :memory parse-opts)]
-    (if (insta/failure? parsed)
-      (errors/unable-to-parse parsed)
-      (-> state
-          (dissoc :input)
-          (assoc :parsed parsed)))))
+
 
 

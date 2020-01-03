@@ -21,9 +21,10 @@
   {:csv    csv-preset
    :passwd passwd-preset})
 
-(defn load-preset [state]
-  (let [preset-name (-> state :options :preset)
-        preset      (get presets preset-name false)]
-    (if preset
-      (merge state preset)
-      (errors/invalid-preset preset-name))))
+(defn load-preset [{:keys [options] :as state}]
+  (if-let [preset-name (-> state :options :preset)]
+    (if-let [preset (get presets preset-name false)]
+      (if preset
+        (merge state preset)
+        (errors/invalid-preset preset-name)))
+    (merge state {:transform (when-not (:no-standard-tx? options) transforms/standard)})))

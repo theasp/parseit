@@ -27,7 +27,7 @@
     :default-desc "json"
     :parse-fn #(when-not (str/blank? %)
                  (keyword %))]
-   ["-s" "--start RULE" "Start processing at this rule"
+   ["-S" "--start RULE" "Start processing at this rule"
     :parse-fn #(when-not (str/blank? %)
                  (keyword %))]
    ["-t" "--transform RULE:TYPE" "Transform a rule into a type"
@@ -35,10 +35,10 @@
     :default []
     :parse-fn #(str/split % #":" 2)
     :validate [#(not (str/blank? (first %)))
-               "Transform rule missing"
+               "Transform rule is empty"
 
                #(not (str/blank? (second %)))
-               "Transform target missing"
+               "Transform target empty"
 
                #(->> (second %)
                      (keyword)
@@ -53,9 +53,21 @@
     :id :no-standard-tx?]
    ["-a" "--all" "Return all parses rather than the best match"
     :id :all?]
-   ["-S" "--style TYPE" "Build the parsed tree in the style of hiccup or enlive"
+   ["-s" "--split REGEX" "Process input as a stream, parsing each chunk seperated by REGEX"
+    :id :split]
+   ["-e" "--encoding ENCODING" "Use the specified encoding when reading the input, or raw"
+    :id :encoding
+    :default "utf8"
+    :validate [#(not (str/blank? %))
+               "Encoding is empty"]]
+   ["-X" "--style TYPE" "Build the parsed tree in the style of hiccup or enlive"
     :default "hiccup"
-    :parse-fn #(when-not (str/blank? %) %)]
+    :parse-fn #(when-not (str/blank? %) (keyword %))
+    :validate [#(not (str/blank? %))
+               "Style is empty"
+
+               #(contains? parser/styles %)
+               "Not a valid style"]]
    ["-h" "--help" "Help"]])
 
 (defn transform-types-help []
@@ -94,13 +106,23 @@
   (presets-help))
 
 (defn handle-opts-normal [options arguments]
-  (-> {:options options :arguments arguments}
-      (transforms/build-transform)
-      (parser/load-grammar)
-      (parser/load-input)
-      (parser/parse-input)
-      (transforms/transform-parsed)
-      (outputs/output-parsed)))
+  (let [{:keys [parse-fn transform-fn output-fn options arguments] :as state}
+        (-> {:options options :arguments arguments}
+            (presets/load-preset)
+            (parser/load-grammar)
+            (parser/build-parser)
+            (transforms/build-transform)
+            (outputs/build-output))
+
+        process-fn #(-> % parse-fn transform-fn output-fn)
+        file       (or (first arguments) "-")
+        encoding   (:encoding options)
+        done-fn    #(process/exit 0)
+        split      (some-> (:split options)
+                           (re-pattern))]
+    (if split
+      (slurp/read-file-split file split encoding process-fn done-fn)
+      (slurp/read-file file encoding process-fn done-fn))))
 
 (defn handle-opts [{:keys [options arguments summary errors]}]
   (cond
@@ -110,5 +132,4 @@
 
 (defn main [& args]
   (-> (parse-opts args cli-options)
-      (handle-opts))
-  (process/exit 0))
+      (handle-opts)))

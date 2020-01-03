@@ -67,13 +67,13 @@
     (assoc transforms (keyword terminal) transform-fn)
     (errors/unknown-transform-type type)))
 
-(defn build-transform [{:keys [options] :as state}]
-  (let [standard? (not (:no-standard-tx? options))
-        transform (if standard? standard {})]
-    (assoc state :transform (reduce add-transform transform (:tx options)))))
+(defn build-transform [{:keys [options transform] :as state}]
+  (let [standard?    (not (:no-standard-tx? options))
+        transform    (reduce add-transform transform (:tx options))
+        transform-fn (if (empty? transform)
+                       identity
+                       #(insta/transform transform %))]
+    (assoc state :transform-fn transform-fn)))
 
-(defn transform-parsed [{:keys [transform] :as state}]
-  (if (empty? transform)
-    state
-    (update state :parsed #(insta/transform transform %))))
-
+(defn transform-parsed [{:keys [transform-fn parsed] :as state}]
+  (assoc state :parsed (transform-fn parsed)))

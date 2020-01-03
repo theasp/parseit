@@ -1,5 +1,5 @@
-passwd = user*
-user = name <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell <EOL>
+passwd = (user <EOL>)*
+user = name <SEP> pw <SEP> uid <SEP> gid <SEP> gecos <SEP> home <SEP> shell
 
 name = STRING
 pw = STRING
@@ -9,9 +9,6 @@ gecos = STRING?
 home = STRING
 shell = STRING
 STRING = #'[^:\r\n]+'
-INTEGER = SIGN? DIGITS EXPONENT?
-<EXPONENT> = 'e' DIGITS
-<SIGN> = '+' | '-'
-<DIGITS> = #'[0-9]+'
+INTEGER = #'[0-9]+'
 SEP = ':'
 EOL = #'(?:\r\n|\r|\n)'
