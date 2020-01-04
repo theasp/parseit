@@ -55,6 +55,8 @@
     :id :all?]
    ["-s" "--split REGEX" "Process input as a stream, parsing each chunk seperated by REGEX"
     :id :split]
+   ["-l" "--split-lines" "Split on newlines, same as --split '(?<=\r?\n)'"
+    :id :split-lines?]
    ["-e" "--encoding ENCODING" "Use the specified encoding when reading the input, or raw"
     :id :encoding
     :default "utf8"
@@ -103,7 +105,8 @@
   (print "")
   (transform-types-help)
   (print "")
-  (presets-help))
+  (presets-help)
+  (process/exit 0))
 
 (defn handle-opts-normal [options arguments]
   (let [{:keys [parse-fn transform-fn output-fn options arguments] :as state}
@@ -118,7 +121,9 @@
         file       (or (first arguments) "-")
         encoding   (:encoding options)
         done-fn    #(process/exit 0)
-        split      (some-> (:split options)
+        split      (some-> (if (:split-lines? options)
+                             "(?<=\r?\n)"
+                             (:split options))
                            (re-pattern))]
     (if split
       (slurp/read-file-split file split encoding process-fn done-fn)
