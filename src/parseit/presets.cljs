@@ -17,9 +17,18 @@
                      {:user   transforms/transform-map
                       :passwd transforms/transform-list})})
 
+(defparser group-parser "group.ebnf")
+(def group-preset
+  {:parser    group-parser
+   :transform (merge transforms/standard
+                     {:group  transforms/transform-map
+                      :groups transforms/transform-list
+                      :user   str})})
+
 (def presets
   {:csv    csv-preset
-   :passwd passwd-preset})
+   :passwd passwd-preset
+   :group  group-preset})
 
 (defn load-preset [{:keys [options] :as state}]
   (if-let [preset-name (-> state :options :preset)]

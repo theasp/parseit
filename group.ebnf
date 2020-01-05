@@ -1,0 +1,13 @@
+groups = (group <EOL>)*
+group = name <SEP> pw <SEP> gid <SEP> user_list?
+user_list = user (<','> user)*
+
+name = STRING
+pw = STRING
+gid = INTEGER
+user = STRING
+
+STRING = #'[^:\r\n,]+'
+INTEGER = #'[0-9]+'
+SEP = ':'
+EOL = #'(?:\r\n|\r|\n)'
