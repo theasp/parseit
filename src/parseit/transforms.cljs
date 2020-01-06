@@ -37,10 +37,10 @@
   {:integer {:aliases [:int]
              :desc    "Convert to integer"
              :fn      transform-integer}
-   :float   {:aliases [:decimal :number]
+   :float   {:aliases [:decimal :number :double]
              :desc    "Convert to floating point"
              :fn      transform-float}
-   :string  {:aliases [:text]
+   :string  {:aliases [:text :str]
              :desc    "Convert to string"
              :fn      str}
    :map     {:aliases [:dict :object]
