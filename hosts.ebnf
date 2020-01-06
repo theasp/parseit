@@ -1,0 +1,43 @@
+hosts = (host? <SPACE*><comment?><EOL>)*
+host = <SPACE*> address <SPACE+> hostname (<SPACE+> aliases)? <SPACE*>
+aliases = WORD (<SPACE+> WORD)*
+comment = '#' STRING?
+
+hostname = WORD
+
+address = ipv4 | ipv6
+
+(* IP parsing from https://github.com/lunatic-cat/iproute/blob/master/resources/route.ebnf *)
+
+(* https://stackoverflow.com/a/14639569/423551 *)
+ipv6 = h16-colon-6 ls32 |
+      "::" h16-colon-5 ls32 |
+      h16? "::" h16-colon-4 ls32 |
+      h16-colon-upto-1? "::" h16-colon-3 ls32 |
+      h16-colon-upto-2? "::" h16-colon-2 ls32 |
+      h16-colon-upto-3? "::" h16 ":" ls32 |
+      h16-colon-upto-4? "::" ls32 |
+      h16-colon-upto-5? "::" h16 |
+      h16-colon-upto-6? "::"
+(* https://github.com/Engelberg/instaparse/issues/187 *)
+<h16-colon-6> = #"([0-9a-fA-F]{1,4}:){6}"
+<h16-colon-5> = #"([0-9a-fA-F]{1,4}:){5}"
+<h16-colon-4> = #"([0-9a-fA-F]{1,4}:){4}"
+<h16-colon-3> = #"([0-9a-fA-F]{1,4}:){3}"
+<h16-colon-2> = #"([0-9a-fA-F]{1,4}:){2}"
+<h16-colon-upto-6> = #"([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}"
+<h16-colon-upto-5> = #"([0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}"
+<h16-colon-upto-4> = #"([0-9a-fA-F]{1,4}:){0,4}[0-9a-fA-F]{1,4}"
+<h16-colon-upto-3> = #"([0-9a-fA-F]{1,4}:){0,3}[0-9a-fA-F]{1,4}"
+<h16-colon-upto-2> = #"([0-9a-fA-F]{1,4}:){0,2}[0-9a-fA-F]{1,4}"
+<h16-colon-upto-1> = #"([0-9a-fA-F]{1,4}:){0,1}[0-9a-fA-F]{1,4}"
+<ls32> = h16 ":" h16 | ipv4
+<h16> = #"[0-9a-fA-F]{1,4}"
+ipv4 = dec-octet "." dec-octet "." dec-octet "." dec-octet
+<dec-octet> = digit | (#"[0-9]" digit) | ("1" digit digit) | ("2" #"[0-4]" digit) | ("25" #"[0-5]")
+<digit> = #"[0-9]"
+
+WORD = #'[a-zA-Z0-9\:\.-]+'
+SPACE = #'[ \t]'
+STRING = #'[^\r\n]+'
+EOL = #'(?:\r\n|\r|\n)'

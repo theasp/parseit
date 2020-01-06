@@ -25,10 +25,21 @@
                       :groups transforms/transform-list
                       :user   str})})
 
+(defparser hosts-parser "hosts.ebnf")
+(def hosts-preset
+  {:parser    hosts-parser
+   :transform (merge transforms/standard
+                     {:hosts transforms/transform-list
+                      :host  transforms/transform-map
+                      :ipv4  str
+                      :ipv6  str
+                      :WORD  str})})
+
 (def presets
   {:csv    csv-preset
    :passwd passwd-preset
-   :group  group-preset})
+   :group  group-preset
+   :hosts  hosts-preset})
 
 (defn load-preset [{:keys [options] :as state}]
   (if-let [preset-name (-> state :options :preset)]
