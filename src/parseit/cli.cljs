@@ -90,8 +90,8 @@
 (defn presets-help []
   (print "Presets")
   (doseq [preset (sort (keys presets/presets))]
-    (when (get presets/presets preset)
-      (printf "  %s" (name preset)))))
+    (let [{:keys [desc]} (get presets/presets preset)]
+      (printf "  %s\n    %s" (name preset) desc))))
 
 (defn handle-opts-help [summary]
   (printf "Usage: %s [options] <grammar> [input]" "parseit")

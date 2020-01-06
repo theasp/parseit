@@ -7,19 +7,23 @@
 
 (defparser csv-parser "csv.ebnf")
 (def csv-preset
-  {:parser csv-parser})
+  {:parser    csv-parser
+   :transform transforms/standard
+   :desc      "CSV files"})
 
 
 (defparser passwd-parser "passwd.ebnf")
 (def passwd-preset
-  {:parser    passwd-parser
+  {:desc      "NSS passwd(5), i.e. /etc/passwd"
+   :parser    passwd-parser
    :transform (merge transforms/standard
                      {:user   transforms/transform-map
                       :passwd transforms/transform-list})})
 
 (defparser group-parser "group.ebnf")
 (def group-preset
-  {:parser    group-parser
+  {:desc      "NSS group(5), i.e. /etc/group"
+   :parser    group-parser
    :transform (merge transforms/standard
                      {:group  transforms/transform-map
                       :groups transforms/transform-list
@@ -27,7 +31,8 @@
 
 (defparser hosts-parser "hosts.ebnf")
 (def hosts-preset
-  {:parser    hosts-parser
+  {:desc      "NSS hosts(5), i.e. /etc/hosts"
+   :parser    hosts-parser
    :transform (merge transforms/standard
                      {:hosts transforms/transform-list
                       :host  transforms/transform-map
