@@ -55,7 +55,7 @@
     :id :all?]
    ["-s" "--split REGEX" "Process input as a stream, parsing each chunk seperated by REGEX"
     :id :split]
-   ["-l" "--split-lines" "Split on newlines, same as --split '(?<=\r?\n)'"
+   ["-l" "--split-lines" "Split on newlines, same as --split '(?<=\\r?\\n)'"
     :id :split-lines?]
    ["-e" "--encoding ENCODING" "Use the specified encoding when reading the input, or raw"
     :id :encoding
