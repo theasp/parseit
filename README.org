@@ -29,26 +29,17 @@ Output Formats
   yaml
 
 Transformation Types
-  decimal, double, float, number
-    Convert to floating point
-  int, integer
-    Convert to integer
-  array, list, vec
-    Create list from children
-  dict, map, object
-    Create map from children
-  str, string, text
-    Convert to string
+  array, list, vec                Create list from children
+  decimal, double, float, number  Convert to floating point
+  dict, map, object               Create map from children
+  int, integer                    Convert to integer
+  str, string, text               Convert to string
 
 Presets
-  csv
-    CSV files
-  group
-    NSS group(5), i.e. /etc/group
-  hosts
-    NSS hosts(5), i.e. /etc/hosts
-  passwd
-    NSS passwd(5), i.e. /etc/passwd
+  csv     CSV files
+  group   NSS group(5), i.e. /etc/group
+  hosts   NSS hosts(5), i.e. /etc/hosts
+  passwd  NSS passwd(5), i.e. /etc/passwd
 #+end_example
 
 * Example

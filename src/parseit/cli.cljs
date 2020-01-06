@@ -72,15 +72,28 @@
                "Not a valid style"]]
    ["-h" "--help" "Help"]])
 
+
+(defn item->help [item-name item]
+  (let [names     (concat [item-name] (:aliases item))
+        item-name (->> names
+                       (map name)
+                       (sort)
+                       (str/join ", "))]
+    [item-name (:desc item)]))
+
+
+(defn print-help-table [items]
+  (let [items   (map #(apply item->help %) items)
+        longest (->> (map #(-> % first count) items)
+                     (apply max))
+        fmt     (str "  %-" longest "s  %s")]
+    (doseq [item (sort items)]
+      (printf fmt (first item) (second item)))))
+
+
 (defn transform-types-help []
   (print "Transformation Types")
-  (doseq [type (sort (keys transforms/transforms))]
-    (let [{:keys [desc aliases]} (get transforms/transforms type)
-          names                  (->> (conj aliases type)
-                                      (map name)
-                                      (sort)
-                                      (str/join ", "))]
-      (printf "  %s\n    %s" names desc))))
+  (print-help-table transforms/transforms))
 
 (defn output-formats-help []
   (print "Output Formats")
@@ -89,9 +102,7 @@
 
 (defn presets-help []
   (print "Presets")
-  (doseq [preset (sort (keys presets/presets))]
-    (let [{:keys [desc]} (get presets/presets preset)]
-      (printf "  %s\n    %s" (name preset) desc))))
+  (print-help-table presets/presets))
 
 (defn handle-opts-help [summary]
   (printf "Usage: %s [options] <grammar> [input]" "parseit")
