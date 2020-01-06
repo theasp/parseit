@@ -17,6 +17,7 @@ Options
   -T, --no-standard-tx               Do use the standard transformations
   -a, --all                          Return all parses rather than the best match
   -s, --split REGEX                  Process input as a stream, parsing each chunk seperated by REGEX
+  -l, --split-lines                  Split on newlines, same as --split '(?<=\r?\n)'
   -e, --encoding ENCODING    utf8    Use the specified encoding when reading the input, or raw
   -X, --style TYPE           hiccup  Build the parsed tree in the style of hiccup or enlive
   -h, --help                         Help
@@ -28,7 +29,7 @@ Output Formats
   yaml
 
 Transformation Types
-  decimal, float, number
+  decimal, double, float, number
     Convert to floating point
   int, integer
     Convert to integer
@@ -36,12 +37,18 @@ Transformation Types
     Create list from children
   dict, map, object
     Create map from children
-  string, text
+  str, string, text
     Convert to string
 
 Presets
   csv
+    CSV files
+  group
+    NSS group(5), i.e. /etc/group
+  hosts
+    NSS hosts(5), i.e. /etc/hosts
   passwd
+    NSS passwd(5), i.e. /etc/passwd
 #+end_example
 
 * Example
