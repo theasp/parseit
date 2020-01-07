@@ -9,7 +9,7 @@
 (def csv-preset
   {:parser    csv-parser
    :transform transforms/standard
-   :desc      "CSV files"})
+   :desc      "Comma Seperated Value"})
 
 
 (defparser passwd-parser "passwd.ebnf")
