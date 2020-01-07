@@ -44,7 +44,9 @@
 
 (defn read-file [file encoding data-fn done-fn]
   (try
-    (-> (create-read-stream file encoding)
-        (read-stream data-fn done-fn))
+    ;; Use slurp-file, streams will be split at 64k by default
+    (-> (slurp-file file encoding)
+        (data-fn))
+    (done-fn)
     (catch js/Object e
       (errors/unable-to-read-file e))))
