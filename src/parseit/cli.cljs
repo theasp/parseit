@@ -30,7 +30,7 @@
    ["-S" "--start RULE" "Start processing at this rule"
     :parse-fn #(when-not (str/blank? %)
                  (keyword %))]
-   ["-t" "--transform RULE:TYPE" "Transform a rule into a type"
+   ["-t" "--transform RULE:TYPE[+]" "Transform a rule into a type, and keep wrapped with + suffix"
     :id :tx
     :default []
     :parse-fn #(str/split % #":" 2)
@@ -40,10 +40,7 @@
                #(not (str/blank? (second %)))
                "Transform target empty"
 
-               #(->> (second %)
-                     (keyword)
-                     (get transforms/transform-fns)
-                     (some?))
+               #(transforms/type-valid? (second %))
                "Unknown transform type"]
     :default-desc ""
     :assoc-fn (fn [options id value]

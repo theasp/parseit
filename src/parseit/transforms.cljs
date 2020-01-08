@@ -51,20 +51,40 @@
              :fn      transform-list}})
 
 (def transform-fns
-  (-> (fn [acc [name value]]
-        (let [names (conj (:aliases value) name)]
-          (-> (fn [acc name]
-                (assoc acc name (:fn value)))
-              (reduce acc names))))
+  (-> (fn [acc [type value]]
+        (let [types (conj (:aliases value) type)
+              f     (:fn value)]
+          (-> (fn [acc type]
+                (let [type+ (-> (name type) (str "+") (keyword))]
+                  (-> acc
+                      (assoc type f)
+                      (assoc type+ f))))
+              (reduce acc types))))
       (reduce {} transforms)))
 
 (def standard
   {:INTEGER transform-integer
+   :NUMBER  transform-float
+   :FLOAT   transform-float
    :STRING  str})
 
-(defn add-transform [transforms [terminal type]]
+(defn type-valid? [type]
+  (contains? transform-fns (keyword type)))
+
+(defn type-wrap? [type]
+  (-> (name type)
+      (last)
+      (= "+")))
+
+(defn wrap-type [f name]
+  (fn [& s]
+    [name (apply f s)]))
+
+(defn add-transform [transforms [rule type]]
   (if-let [transform-fn (get transform-fns (keyword type))]
-    (assoc transforms (keyword terminal) transform-fn)
+    (if (type-wrap? type)
+      (assoc transforms (keyword rule) (wrap-type transform-fn rule))
+      (assoc transforms (keyword rule) transform-fn))
     (errors/unknown-transform-type type)))
 
 (defn build-transform [{:keys [options transform] :as state}]
