@@ -6,6 +6,7 @@
    [clojure.string :as str]
    [instaparse.core :as insta :refer-macros [defparser]]))
 
+
 (defn transform-integer [& s]
   (-> (apply str s)
       (js/parseInt)))
@@ -17,6 +18,9 @@
 (defn transform-uuid [& s]
   (-> (apply str s)
       (uuid)))
+
+(defn transform-nil [& s]
+  nil)
 
 (defn add-child-to-map [m child]
   (if (vector? child)
@@ -48,7 +52,10 @@
              :fn      transform-map}
    :list    {:aliases [:array :vec]
              :desc    "Create list from children"
-             :fn      transform-list}})
+             :fn      transform-list}
+   :nil     {:aliases [:null]
+             :desc    "Convert to nil"
+             :fn      transform-nil}})
 
 (def transform-fns
   (-> (fn [acc [type value]]
