@@ -1,11 +1,12 @@
 hosts = (host? <SPACE*><comment?><EOL>)*
-host = <SPACE*> address <SPACE+> hostname (<SPACE+> aliases)? <SPACE*>
-aliases = WORD (<SPACE+> WORD)*
+host = <SPACE*> address <SPACE+> name (<SPACE+> aliases)? <SPACE*>
+aliases = hostname (<SPACE+> hostname)*
 comment = '#' STRING?
-
-hostname = WORD
-
+name = hostname
 address = ipv4 | ipv6
+
+hostname = hostname_segment ('.' hostname_segment)*
+hostname_segment = #'[a-zA-Z0-9][a-zA-Z0-9-]*'
 
 (* IP parsing from https://github.com/lunatic-cat/iproute/blob/master/resources/route.ebnf *)
 
@@ -37,7 +38,6 @@ ipv4 = dec-octet "." dec-octet "." dec-octet "." dec-octet
 <dec-octet> = digit | (#"[0-9]" digit) | ("1" digit digit) | ("2" #"[0-4]" digit) | ("25" #"[0-5]")
 <digit> = #"[0-9]"
 
-WORD = #'[a-zA-Z0-9\:\.-]+'
 SPACE = #'[ \t]'
 STRING = #'[^\r\n]+'
 EOL = #'(?:\r\n|\r|\n)'

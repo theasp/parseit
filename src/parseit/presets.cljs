@@ -34,11 +34,12 @@
   {:desc      "NSS hosts(5), i.e. /etc/hosts"
    :parser    hosts-parser
    :transform (merge transforms/standard
-                     {:hosts transforms/transform-list
-                      :host  transforms/transform-map
-                      :ipv4  str
-                      :ipv6  str
-                      :WORD  str})})
+                     {:hosts            transforms/transform-list
+                      :host             transforms/transform-map
+                      :hostname_segment str
+                      :hostname         str
+                      :ipv4             str
+                      :ipv6             str})})
 
 (def presets
   {:csv    csv-preset
