@@ -76,7 +76,7 @@
              :desc    "Create a keyword (only useful for EDN or Transit)"
              :fn      transform-keyword}
    :map-kv  {:aliases []
-             :desc    "Transform a list into a map"
+             :desc    "Transform a list of key value pairs into a map"
              :fn      transform-map-kv}
    :merge   {:aliases []
              :desc    "Merge multiple maps into a single map"

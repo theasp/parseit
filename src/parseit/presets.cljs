@@ -43,7 +43,7 @@
 
 (defparser hpl-parser "hpl.ebnf")
 (def hpl-preset
-  {:desc      "Parser for High Performance Linpack results"
+  {:desc      "High Performance Linpack benchmark results"
    :parser    hpl-parser
    :transform (merge transforms/standard
                      {:hpl            transforms/transform-map
