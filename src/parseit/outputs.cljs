@@ -37,14 +37,30 @@
       (yaml/safeDump)
       (print)))
 
+(def outputs
+  {:edn             {:desc "Extensible Data Format"
+                     :fn   edn-output}
+   :edn-pretty      {:desc "Extensible Data Format (pretty)"
+                     :fn   edn-pretty-output}
+   :json            {:desc "JavaScript Object Notation"
+                     :fn   json-output}
+   :json-pretty     {:desc "JavaScript Object Notation (pretty)"
+                     :fn   json-pretty-output}
+   :transit         {:desc "Transit JSON"
+                     :fn   transit-output}
+   :transit-verbose {:desc "Transit JSON Verbose"
+                     :fn   transit-verbose-output}
+   :yaml            {:desc "YAML Ain't Markup Language"
+                     :fn   yaml-output}})
+
 (def output-fns
-  {:edn             edn-output
-   :edn-pretty      edn-pretty-output
-   :json            json-output
-   :json-pretty     json-pretty-output
-   :transit         transit-output
-   :transit-verbose transit-verbose-output
-   :yaml            yaml-output})
+  (-> (fn [acc [type value]]
+        (let [types (conj (:aliases value) type)
+              f     (:fn value)]
+          (-> (fn [acc type]
+                (assoc acc type f))
+              (reduce acc types))))
+      (reduce {} outputs)))
 
 (defn output-parsed [{:keys [output-fn parsed] :as state}]
   (output-fn parsed))

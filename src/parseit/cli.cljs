@@ -94,8 +94,7 @@
 
 (defn output-formats-help []
   (print "Output Formats")
-  (doseq [format (sort (keys outputs/output-fns))]
-    (printf "  %s" (name format))))
+  (print-help-table outputs/outputs))
 
 (defn presets-help []
   (print "Presets")
