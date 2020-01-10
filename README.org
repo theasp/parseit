@@ -10,35 +10,44 @@ Usage: parseit [options] <grammar> [input]
        parseit --help
 
 Options
-  -p, --preset PRESET        none    Preset grammar to use
-  -f, --format FORMAT        json    Select the output format
-  -S, --start RULE                   Start processing at this rule
-  -t, --transform RULE:TYPE          Transform a rule into a type
-  -T, --no-standard-tx               Do use the standard transformations
-  -a, --all                          Return all parses rather than the best match
-  -s, --split REGEX                  Process input as a stream, parsing each chunk seperated by REGEX
-  -l, --split-lines                  Split on newlines, same as --split '(?<=\r?\n)'
-  -e, --encoding ENCODING    utf8    Use the specified encoding when reading the input, or raw
-  -X, --style TYPE           hiccup  Build the parsed tree in the style of hiccup or enlive
-  -h, --help                         Help
+  -p, --preset PRESET           none         Preset grammar to use
+  -f, --format FORMAT           json-pretty  Select the output format
+  -S, --start RULE                           Start processing at this rule
+  -t, --transform RULE:TYPE[+]               Transform a rule into a type, and keep wrapped with + suffix
+  -T, --no-standard-tx                       Do use the standard transformations
+  -a, --all                                  Return all parses rather than the best match
+  -s, --split REGEX                          Process input as a stream, parsing each chunk seperated by REGEX
+  -l, --split-lines                          Split on newlines, same as --split '(?<=\r?\n)'
+  -e, --encoding ENCODING       utf8         Use the specified encoding when reading the input, or raw
+  -X, --style TYPE              hiccup       Build the parsed tree in the style of hiccup or enlive
+  -h, --help                                 Help
 
 Output Formats
-  edn
-  json
-  transit
-  yaml
+  edn              Extensible Data Format
+  edn-pretty       Extensible Data Format (pretty)
+  json             JavaScript Object Notation
+  json-pretty      JavaScript Object Notation (pretty)
+  transit          Transit JSON
+  transit-verbose  Transit JSON Verbose
+  yaml             YAML Ain't Markup Language
 
 Transformation Types
-  array, list, vec                Create list from children
+  array, list, unwrap, vec        Create list from children
   decimal, double, float, number  Convert to floating point
   dict, map, object               Create map from children
+  first                           No conversion, just the first item
   int, integer                    Convert to integer
+  keyword                         Create a keyword (only useful for EDN or Transit)
+  map-kv                          Transform a list of key value pairs into a map
+  merge                           Merge multiple maps into a single map
+  nil, null                       Convert to nil
   str, string, text               Convert to string
 
 Presets
-  csv     CSV files
+  csv     Comma Seperated Value
   group   NSS group(5), i.e. /etc/group
   hosts   NSS hosts(5), i.e. /etc/hosts
+  hpl     High Performance Linpack benchmark results
   passwd  NSS passwd(5), i.e. /etc/passwd
 #+end_example
 
