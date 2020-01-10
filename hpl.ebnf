@@ -1,0 +1,49 @@
+hpl = header settings results
+
+header = <DOUBLE_LINE> version authors
+version = <"HPLinpack"> <SPACE> FLOAT <SPACE> <NOT_EOL> <EOL>
+authors = author_line+
+<author_line> = (<'Written by'> | <'Modified by'>) <SPACE> NOT_EOL <EOL>
+
+settings = <DOUBLE_LINE> <EOL> <settings_head> settings_body <settings_foot>
+
+settings_head = <'An explanation of the input/output parameters follows:'> <EOL> (<NOT_EOL> <EOL>)+ <EOL>
+settings_body = <'The following parameter values will be used:'> <EOL> <EOL> kv_item+ <EOL>
+
+kv_item = kv_key <':'> kv_value <EOL>
+kv_key = <SPACE?> #'[^:\r\n]*[^:\r\n \t]' <SPACE>
+kv_value = <SPACE> (INTEGER / FLOAT / STRING)  <SPACE?>
+
+settings_foot = <SINGLE_LINE> <EOL> (<NOT_EOL> <EOL>)+ <EOL>  
+
+results = <DOUBLE_LINE> <NOT_EOL> <EOL> <SINGLE_LINE> test_results <result_hpl_pdgesv> <V_LINE> result_timings <SINGLE_LINE> (<NOT_EOL?> <EOL>)*
+test_results = result*
+
+result = result_tv <SPACE> result_n <SPACE> result_nb <SPACE> result_p <SPACE> result_q <SPACE> result_time <SPACE> result_gflops <EOL>
+result_tv = WORD
+result_n = INTEGER
+result_nb = INTEGER
+result_p = INTEGER
+result_q = INTEGER
+result_time = FLOAT
+result_gflops = FLOAT
+
+result_hpl_pdgesv = 'HPL_pdgesv() start time' NOT_EOL EOL EOL 'HPL_pdgesv() end time' NOT_EOL EOL EOL
+result_timings = kv_item+
+
+V_LINE = "--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV--VVV-" <EOL>
+DOUBLE_LINE = "================================================================================" <EOL>
+SINGLE_LINE = "--------------------------------------------------------------------------------" <EOL>
+
+SPACE = #'[ \t]+'
+WORD = #'[^ \t]+'
+INTEGER = SIGN? DIGITS
+FLOAT = SIGN? DIGITS '.' DIGITS? EXPONENT?
+EXPONENT = 'e' INTEGER
+
+SIGN = '+' | '-'
+<DIGITS> = #'[0-9]+'
+STRING = <SPACE*> #'[^\r\n]*[^\r\n \t]' <SPACE*>
+
+<NOT_EOL> = #'[^\r\n]+'
+<EOL> = #'(?:\r\n|\r|\n)'

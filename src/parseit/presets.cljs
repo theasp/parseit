@@ -41,11 +41,29 @@
                       :ipv4             str
                       :ipv6             str})})
 
+(defparser hpl-parser "hpl.ebnf")
+(def hpl-preset
+  {:desc      "Parser for High Performance Linpack results"
+   :parser    hpl-parser
+   :transform (merge transforms/standard
+                     {:hpl            transforms/transform-map
+                      :authors        (transforms/wrap-type transforms/transform-list :authors)
+                      :header         (transforms/wrap-type transforms/transform-map :header)
+                      :result_timings (transforms/wrap-type transforms/transform-merge :result_timings)
+                      :results        (transforms/wrap-type transforms/transform-map :results)
+                      :result         transforms/transform-map
+                      :WORD           str
+                      :settings_body  transforms/transform-merge
+                      :kv_item        transforms/transform-map-kv
+                      :kv_key         transforms/transform-first
+                      :kv_value       transforms/transform-first})})
+
 (def presets
   {:csv    csv-preset
    :passwd passwd-preset
    :group  group-preset
-   :hosts  hosts-preset})
+   :hosts  hosts-preset
+   :hpl    hpl-preset})
 
 (defn load-preset [{:keys [options] :as state}]
   (if-let [preset-name (-> state :options :preset)]
