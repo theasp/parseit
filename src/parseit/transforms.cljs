@@ -34,8 +34,24 @@
 (defn transform-map [& children]
   (reduce add-child-to-map {} children))
 
+(defn transform-map-kv [& children]
+  {(first children) (second children)})
+
+(defn transform-merge [& children]
+  (apply merge children))
+
+
 (defn transform-list [& children]
-  (reduce conj [] children))
+  children)
+
+(defn transform-first [& children]
+  (first children))
+
+
+(defn transform-keyword [& s]
+  (-> (apply str s)
+      (keyword)))
+
 
 (def transforms
   {:integer {:aliases [:int]
@@ -50,9 +66,21 @@
    :map     {:aliases [:dict :object]
              :desc    "Create map from children"
              :fn      transform-map}
-   :list    {:aliases [:array :vec]
+   :list    {:aliases [:array :vec :unwrap]
              :desc    "Create list from children"
              :fn      transform-list}
+   :first   {:aliases []
+             :desc    "No conversion, just the first item"
+             :fn      transform-first}
+   :keyword {:aliases []
+             :desc    "Create a keyword (only useful for EDN or Transit)"
+             :fn      transform-keyword}
+   :map-kv  {:aliases []
+             :desc    "Transform a list into a map"
+             :fn      transform-map-kv}
+   :merge   {:aliases []
+             :desc    "Merge multiple maps into a single map"
+             :fn      transform-merge}
    :nil     {:aliases [:null]
              :desc    "Convert to nil"
              :fn      transform-nil}})
