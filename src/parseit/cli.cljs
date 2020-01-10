@@ -23,8 +23,8 @@
     :default-desc "none"]
    ["-f" "--format FORMAT" "Select the output format"
     :id :format
-    :default :json
-    :default-desc "json"
+    :default :json-pretty
+    :default-desc "json-pretty"
     :parse-fn #(when-not (str/blank? %)
                  (keyword %))]
    ["-S" "--start RULE" "Start processing at this rule"
