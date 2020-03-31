@@ -31,6 +31,6 @@
   },
   "devDependencies": {
     "nexe": "^3.3.2",
-    "shadow-cljs": "^2.8.83"
+    "shadow-cljs": "^2.8.94"
   }
 }
