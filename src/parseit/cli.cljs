@@ -52,8 +52,14 @@
     :id :all?]
    ["-s" "--split REGEX" "Process input as a stream, parsing each chunk seperated by REGEX"
     :id :split]
-   ["-l" "--split-lines" "Split on newlines, same as --split '(?<=\\r?\\n)'"
-    :id :split-lines?]
+   ["-l" "--split-lines" "Split on newlines, same as --split '\\r?\\n'"
+    :id :split-lines?
+    :assoc-fn (fn [options id]
+                (assoc options :split "\\r?\\n"))]
+   ["-L" "--split-lines-keep" "Split on newlines, keeping the newline, same as --split '(?<=\\r?\\n)'"
+    :id :split-lines-keep?
+    :assoc-fn (fn [options id]
+                (assoc options :split "(?<=\\r?\\n)"))]
    ["-e" "--encoding ENCODING" "Use the specified encoding when reading the input, or raw"
     :id :encoding
     :default "utf8"
@@ -128,9 +134,7 @@
         file       (or (first arguments) "-")
         encoding   (:encoding options)
         done-fn    #(process/exit 0)
-        split      (some-> (if (:split-lines? options)
-                             "(?<=\r?\n)"
-                             (:split options))
+        split      (some-> (:split options)
                            (re-pattern))]
     (if split
       (slurp/read-file-split file split encoding process-fn done-fn)
