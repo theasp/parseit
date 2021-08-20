@@ -98,7 +98,8 @@
       (reduce {} transforms)))
 
 (def standard
-  {:INTEGER transform-integer
+  {:DIGITS  transform-integer
+   :INTEGER transform-integer
    :NUMBER  transform-float
    :FLOAT   transform-float
    :STRING  str})
