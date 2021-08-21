@@ -33,7 +33,7 @@
 (defn transform-hex [& s]
   (str "0x" (-> (apply str s)
                 (str/replace #"^0x" "")
-                (str/upper-case s))))
+                (str/upper-case))))
 
 (defn transform-nil [& s]
   nil)
