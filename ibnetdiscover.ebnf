@@ -66,7 +66,7 @@ port_speed = #'\d+x[A-Z]+'
 
 COMMENT = <'#'> STRING? <EOL>
 
-<HEX> = <'0x'?> #'[0-9a-f]+'
+HEX = #'(0x)?[0-9a-f]+'
 
 SPACE = #'[ \t]+'
 WORD = #'[^ \t]+'
