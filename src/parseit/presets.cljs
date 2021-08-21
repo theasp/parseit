@@ -83,7 +83,7 @@
 (defparser ibdiagnet-lst-parser "ibdiagnet-lst.ebnf")
 
 (def ibdiagnet-lst-preset
-  {:desc      "Infiband ibdiagnet.lst"
+  {:desc      "Infiniband ibdiagnet.lst"
    :parser    ibdiagnet-lst-parser
    :transform (merge transforms/standard
                      {:port          (wrap-type transform-hex-to-int :port)
