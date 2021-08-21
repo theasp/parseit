@@ -58,12 +58,24 @@
                       :kv_key         transforms/transform-first
                       :kv_value       transforms/transform-first})})
 
+(defparser ibnetdiscover-parser "ibnetdiscover.ebnf")
+(def ibnetdiscover-preset
+  {:desc      "Infiniband ibnetdiscover"
+   :parser    ibnetdiscover-parser
+   :transform (merge transforms/standard
+                     {:ibnetdiscover transforms/transform-map
+                      :header        (transforms/wrap-type transforms/transform-merge :header)
+                      :initiated     transforms/transform-map
+                      :generated     transforms/transform-map
+                      :node          transforms/transform-map
+                      :port          transforms/transform-map})})
 (def presets
-  {:csv    csv-preset
-   :passwd passwd-preset
-   :group  group-preset
-   :hosts  hosts-preset
-   :hpl    hpl-preset})
+  {:csv           csv-preset
+   :passwd        passwd-preset
+   :group         group-preset
+   :hosts         hosts-preset
+   :hpl           hpl-preset
+   :ibnetdiscover ibnetdiscover-preset})
 
 (defn load-preset [{:keys [options] :as state}]
   (if-let [preset-name (-> state :options :preset)]
@@ -72,3 +84,4 @@
         (merge state preset)
         (errors/invalid-preset preset-name)))
     (merge state {:transform (when-not (:no-standard-tx? options) transforms/standard)})))
+

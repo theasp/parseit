@@ -1,0 +1,84 @@
+ibnetdiscover = header nodes
+
+header = <COMMENT> generated <COMMENT> initiated
+generated = <'#'> <SPACE> <'Topology file: generated on '> generated_date <EOL>
+generated_date = STRING
+
+initiated = <'#'> <SPACE> initiated_node_guid <SPACE> initiated_port_guid <EOL>
+initiated_node_guid = <'Initiated from node '> GUID
+initiated_port_guid = <'port '> GUID
+
+nodes = node+
+node = <EOL> vend_id dev_id sysimg_guid (ca_guid | switch_guid) node_info ports
+
+vend_id = <'vendid='> HEX <EOL>
+dev_id = <'devid='> HEX <EOL>
+sysimg_guid = <'sysimgguid='> GUID <EOL>
+ca_guid = <'caguid='> GUID <EOL>
+switch_guid = <'switchguid='> GUID (<'('> <GUID> <')'>)? <EOL>
+
+<GUID> = <#'(S|H)-'?> HEX
+
+<node_info> = node_type <SPACE>
+              node_ports <SPACE>
+              <'"'> <GUID> <'"'> <SPACE>
+              <'#'> <SPACE>
+              node_name
+              (  <SPACE>
+                 node_class <SPACE>
+                 'port 0' <SPACE>
+                 node_lid <SPACE>
+                 node_lmc
+              )? EOL
+
+
+node_type = #'(Ca|Switch)'
+node_name = <'"'> #'[^"\r\n]+' <'"'>
+node_ports = DIGITS
+node_lid = LID
+node_lmc = LMC
+node_class = #'(base|enhanced)'
+
+ports = port*
+
+port = port_num port_local_guid? <SPACE>
+       port_remote_guid port_remote_port <port_local_guid?> <SPACE>
+       <'#'>
+       (<SPACE> port_local_lid)?
+       (<SPACE> port_local_lmc)?
+       <SPACE>
+       node_name <SPACE>
+       port_remote_lid <SPACE>
+       port_speed <EOL>
+
+port_local_guid = <'('> GUID <')'>
+port_num = <'['> DIGITS <']'> 
+port_remote_guid = <'"'> GUID <'"'>
+port_remote_port = <'['> DIGITS <']'>
+port_local_lid = LID
+port_local_lmc = LMC
+port_remote_lid = LID
+port_speed = #'\d+x[A-Z]+'
+
+
+<LID> = <'lid '> DIGITS
+<LMC> = <'lmc '> DIGITS
+
+COMMENT = <'#'> STRING? <EOL>
+
+<HEX> = <'0x'?> #'[0-9a-f]+'
+
+SPACE = #'[ \t]+'
+WORD = #'[^ \t]+'
+
+<INTEGER> = SIGN? DIGITS
+<FLOAT> = SIGN? DIGITS '.' DIGITS? EXPONENT?
+<EXPONENT> = 'e' INTEGER
+
+SIGN = '+' | '-'
+DIGITS = #'[0-9]+'
+STRING = <SPACE*> #'[^\r\n]*[^\r\n \t]' <SPACE*>
+
+<NOT_EOL> = #'[^\r\n]+'
+<EOL> = #'(?:\r\n|\r|\n)'
+
