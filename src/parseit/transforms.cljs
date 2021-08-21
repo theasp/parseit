@@ -19,6 +19,14 @@
   (-> (apply str s)
       (uuid)))
 
+(defn transform-hex-to-int [& s]
+  (-> (apply str s)
+      (js/parseInt 16)))
+
+(defn transform-int-to-hex [& s]
+  (-> (apply int s)
+      (.toString 16)))
+
 (defn transform-nil [& s]
   nil)
 
@@ -40,50 +48,53 @@
 (defn transform-merge [& children]
   (apply merge children))
 
-
 (defn transform-list [& children]
   children)
 
 (defn transform-first [& children]
   (first children))
 
-
 (defn transform-keyword [& s]
   (-> (apply str s)
       (keyword)))
 
-
 (def transforms
-  {:integer {:aliases [:int]
-             :desc    "Convert to integer"
-             :fn      transform-integer}
-   :float   {:aliases [:decimal :number :double]
-             :desc    "Convert to floating point"
-             :fn      transform-float}
-   :string  {:aliases [:text :str]
-             :desc    "Convert to string"
-             :fn      str}
-   :map     {:aliases [:dict :object]
-             :desc    "Create map from children"
-             :fn      transform-map}
-   :list    {:aliases [:array :vec :unwrap]
-             :desc    "Create list from children"
-             :fn      transform-list}
-   :first   {:aliases []
-             :desc    "No conversion, just the first item"
-             :fn      transform-first}
-   :keyword {:aliases []
-             :desc    "Create a keyword (only useful for EDN or Transit)"
-             :fn      transform-keyword}
-   :map-kv  {:aliases []
-             :desc    "Transform a list of key value pairs into a map"
-             :fn      transform-map-kv}
-   :merge   {:aliases []
-             :desc    "Merge multiple maps into a single map"
-             :fn      transform-merge}
-   :nil     {:aliases [:null]
-             :desc    "Convert to nil"
-             :fn      transform-nil}})
+  {:integer    {:aliases [:int]
+                :desc    "Convert to integer"
+                :fn      transform-integer}
+   :float      {:aliases [:decimal :number :double]
+                :desc    "Convert to floating point"
+                :fn      transform-float}
+   :string     {:aliases [:text :str]
+                :desc    "Convert to string"
+                :fn      str}
+   :hex-to-int {:aliases [:hex2int :hex-int]
+                :desc    "Convert hex to integer"
+                :fn      transform-hex-to-int}
+   :int-to-hex {:aliases [:int2hex :int-hex]
+                :desc    "Convert integer to hex"
+                :fn      transform-int-to-hex}
+   :map        {:aliases [:dict :object]
+                :desc    "Create map from children"
+                :fn      transform-map}
+   :list       {:aliases [:array :vec :unwrap]
+                :desc    "Create list from children"
+                :fn      transform-list}
+   :first      {:aliases []
+                :desc    "No conversion, just the first item"
+                :fn      transform-first}
+   :keyword    {:aliases []
+                :desc    "Create a keyword (only useful for EDN or Transit)"
+                :fn      transform-keyword}
+   :map-kv     {:aliases []
+                :desc    "Transform a list of key value pairs into a map"
+                :fn      transform-map-kv}
+   :merge      {:aliases []
+                :desc    "Merge multiple maps into a single map"
+                :fn      transform-merge}
+   :nil        {:aliases [:null]
+                :desc    "Convert to nil"
+                :fn      transform-nil}})
 
 (def transform-fns
   (-> (fn [acc [type value]]
