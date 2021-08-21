@@ -81,6 +81,7 @@
                       :port          transform-map})})
 
 (defparser ibdiagnet-lst-parser "ibdiagnet-lst.ebnf")
+
 (def ibdiagnet-lst-preset
   {:desc      "Infiband ibdiagnet.lst"
    :parser    ibdiagnet-lst-parser
