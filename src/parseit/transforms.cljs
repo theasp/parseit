@@ -21,11 +21,18 @@
 
 (defn transform-hex-to-int [& s]
   (-> (apply str s)
+      (replace #'^0x' '')
       (js/parseInt 16)))
 
 (defn transform-int-to-hex [& s]
-  (-> (apply int s)
-      (.toString 16)))
+  (str "0x" (-> (apply int s)
+                (.toString 16))))
+
+(defn transform-hex [& s]
+  (let [s (-> (apply str s))]
+    (if (str/starts-with? s "0x")
+      s
+      (str "0x" s))))
 
 (defn transform-nil [& s]
   nil)
@@ -68,6 +75,9 @@
    :string     {:aliases [:text :str]
                 :desc    "Convert to string"
                 :fn      str}
+   :hex        {:aliases []
+                :desc    "Ensure that the value starts with 0x"
+                :fn      transform-hex}
    :hex-to-int {:aliases [:hex2int :hex-int]
                 :desc    "Convert hex to integer"
                 :fn      transform-hex-to-int}
@@ -113,6 +123,7 @@
    :INTEGER transform-integer
    :NUMBER  transform-float
    :FLOAT   transform-float
+   :HEX     transform-hex
    :WORD    str
    :STRING  str})
 
