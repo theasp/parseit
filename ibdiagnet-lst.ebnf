@@ -29,7 +29,7 @@ node = <'{'> <SPACE>
                vendor_id <SPACE>
                device_id <SPACE>
                revision <SPACE>
-               system_name <SPACE>
+               name <SPACE>
                lid <SPACE>
                port <SPACE>
                <'}'>
@@ -44,7 +44,7 @@ device_id = <'DevID:'> HEX
 revision = <'Rev:'> HEX
 lid = <'LID:'> HEX
 port = <'PN:'> HEX
-system_name = <'{'> #'[^\}]+' <'}'>
+name = <'{'> #'[^\}]+' <'}'>
 
 conn = phy <SPACE>
        log <SPACE>
