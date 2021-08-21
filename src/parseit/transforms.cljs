@@ -25,7 +25,8 @@
       (js/parseInt 16)))
 
 (defn transform-int-to-hex [& s]
-  (str "0x" (-> (apply int s)
+  (str "0x" (-> (apply str s)
+                (int)
                 (.toString 16)
                 (str/upper-case))))
 
