@@ -21,7 +21,7 @@
 
 (defn transform-hex-to-int [& s]
   (-> (apply str s)
-      (replace #'^0x' '')
+      (str/replace #"^0x" "")
       (js/parseInt 16)))
 
 (defn transform-int-to-hex [& s]
@@ -29,7 +29,7 @@
                 (.toString 16))))
 
 (defn transform-hex [& s]
-  (let [s (-> (apply str s))]
+  (let [s (apply str s)]
     (if (str/starts-with? s "0x")
       s
       (str "0x" s))))
