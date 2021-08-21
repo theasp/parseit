@@ -1,7 +1,6 @@
 (ns parseit.parser
   (:require
    [parseit.misc :as misc]
-   [parseit.presets :as presets]
    [parseit.slurp :as slurp]
    [parseit.errors :as errors]
    [instaparse.core :as insta :refer-macros [defparser]]))
@@ -51,9 +50,3 @@
   (if (or (:grammar state) (:parser state))
     state
     (load-grammar-file state)))
-
-
-
-
-
-
