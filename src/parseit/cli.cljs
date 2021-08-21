@@ -17,10 +17,11 @@
   [["-p" "--preset PRESET" "Preset grammar to use"
     :id :preset
     :default nil
-    :parse-fn #(when-not (or (str/blank? %)
-                             (= "none" %))
+    :parse-fn #(when-not (str/blank? %)
                  (keyword %))
-    :default-desc "none"]
+    :default-desc "none"
+    :validate [presets/preset-valid?
+               "Unknown preset name"]]
    ["-f" "--format FORMAT" "Select the output format"
     :id :format
     :default :json-pretty

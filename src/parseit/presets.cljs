@@ -117,3 +117,6 @@
         (errors/invalid-preset (name preset-name))))
     (merge state {:transform (when-not (:no-standard-tx? options) transforms/standard)})))
 
+(defn preset-valid? [name]
+  (-> (get presets name)
+      (some?)))
