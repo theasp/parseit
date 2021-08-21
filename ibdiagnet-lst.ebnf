@@ -1,0 +1,70 @@
+ibdiagnet_lst = header <EOL> <EOL> links
+
+header = <COMMENT>
+         version
+         command
+         timestamp
+
+version = <'# Running version: '> versions <EOL>
+versions = (version_item <','?>)+
+version_item = <'"'> version_name <SPACE> version_value <'"'>
+version_name = #'[^ \"]+'
+version_value = #'[^ \"]+'
+
+command = <'# Running command: '> STRING <EOL>
+timestamp = <'# Timestamp: '> STRING <EOL>
+
+links = link+
+link = from <SPACE> to <SPACE> conn <EOL>
+
+from = node
+to = node
+
+node = <'{'> <SPACE>
+               type <SPACE>
+               ports <SPACE>
+               system_guid <SPACE>
+               guid <SPACE>
+               port_guid <SPACE>
+               vendor_id <SPACE>
+               device_id <SPACE>
+               revision <SPACE>
+               system_name <SPACE>
+               lid <SPACE>
+               port <SPACE>
+               <'}'>
+
+type = WORD
+ports = <'Ports:'> HEX
+system_guid = <'SystemGUID:'> HEX
+guid = <'NodeGUID:'> HEX
+port_guid = <'PortGUID:'> HEX
+vendor_id = <'VenID:'> HEX
+device_id = <'DevID:'> HEX
+revision = <'Rev:'> HEX
+lid = <'LID:'> HEX
+port = <'PN:'> HEX
+system_name = <'{'> #'[^\}]+' <'}'>
+
+conn = phy <SPACE>
+       log <SPACE>
+       speed
+
+phy = <'PHY='> WORD
+log = <'LOG='> WORD
+speed = <'SPD='> DIGITS
+
+QUOTED_TUPLE = <'"'> #'[^ \"]+' <SPACE> #'[^ \"]+' <'"'>
+
+COMMENT = <'#'> STRING? <EOL>
+<HEX> = <'0x'?> #'[0-9a-fA-F]+'
+
+SPACE = #'[ \t]+'
+WORD = #'[^ \t]+'
+
+DIGITS = #'[0-9]+'
+STRING = <SPACE*> #'[^\r\n]*[^\r\n \t]' <SPACE*>
+
+<NOT_EOL> = #'[^\r\n]+'
+<EOL> = #'(?:\r\n|\r|\n)'
+
