@@ -102,6 +102,7 @@
    :INTEGER transform-integer
    :NUMBER  transform-float
    :FLOAT   transform-float
+   :WORD    str
    :STRING  str})
 
 (defn type-valid? [type]
