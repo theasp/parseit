@@ -57,7 +57,7 @@ speed = <'SPD='> DIGITS
 QUOTED_TUPLE = <'"'> #'[^ \"]+' <SPACE> #'[^ \"]+' <'"'>
 
 COMMENT = <'#'> STRING? <EOL>
-<HEX> = <'0x'?> #'[0-9a-fA-F]+'
+HEX = #'(0x)?[0-9a-fA-F]+'
 
 SPACE = #'[ \t]+'
 WORD = #'[^ \t]+'
