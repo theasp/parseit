@@ -26,13 +26,13 @@
 
 (defn transform-int-to-hex [& s]
   (str "0x" (-> (apply int s)
-                (.toString 16))))
+                (.toString 16)
+                (str/upper-case))))
 
 (defn transform-hex [& s]
-  (let [s (apply str s)]
-    (if (str/starts-with? s "0x")
-      s
-      (str "0x" s))))
+  (str "0x" (-> (apply str s)
+                (str/replace #"^0x" "")
+                (str/upper-case s))))
 
 (defn transform-nil [& s]
   nil)
