@@ -52,7 +52,7 @@ conn = phy <SPACE>
 
 phy = <'PHY='> WORD
 log = <'LOG='> WORD
-speed = <'SPD='> FLOAT
+speed = <'SPD='> NUMBER
 
 QUOTED_TUPLE = <'"'> #'[^ \"]+' <SPACE> #'[^ \"]+' <'"'>
 
@@ -62,11 +62,8 @@ HEX = #'(0x)?[0-9a-fA-F]+'
 SPACE = #'[ \t]+'
 WORD = #'[^ \t]+'
 
+NUMBER = #'[0-9]+(\.[0-9]+)?'
 
-INTEGER = SIGN? DIGITS
-FLOAT = SIGN? DIGITS '.' DIGITS? EXPONENT?
-EXPONENT = 'e' INTEGER
-DIGITS = #'[0-9]+'
 STRING = <SPACE*> #'[^\r\n]*[^\r\n \t]' <SPACE*>
 
 <NOT_EOL> = #'[^\r\n]+'
