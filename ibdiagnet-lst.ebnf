@@ -1,4 +1,4 @@
-ibdiagnet_lst = header <EOL> <EOL> links
+ibdiagnet_lst = (header <EOL> <EOL>)? links
 
 header = <COMMENT>
          version
