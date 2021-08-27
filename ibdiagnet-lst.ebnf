@@ -50,7 +50,7 @@ conn = phy <SPACE>
        log <SPACE>
        speed
 
-phy = <'PHY='> WORD
+phy = <'PHY='> (WORD | '')
 log = <'LOG='> WORD
 speed = <'SPD='> NUMBER
 
